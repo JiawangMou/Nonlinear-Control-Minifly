@@ -72,10 +72,11 @@ void stateControl(control_t *control, sensorData_t *sensors, state_t *state, set
 			
 		attitudeDesired.roll += configParam.trimR;	//叠加微调值
 		attitudeDesired.pitch += configParam.trimP;		
-		
+#ifdef PID_CONTROL		
 		attitudeAnglePID(&state->attitude, &attitudeDesired, &rateDesired);
+#endif
 	}
-	
+#ifdef PID_CONTROL			
 	//角速度环（内环）
 	if (RATE_DO_EXECUTE(RATE_PID_RATE, tick))
 	{
@@ -98,6 +99,11 @@ void stateControl(control_t *control, sensorData_t *sensors, state_t *state, set
 		
 		attitudeRatePID(&sensors->gyro, &rateDesired, control);
 	}
+#endif
+
+#ifdef ADAPTIVE_CONTROL
+attitudeAdadptiveControl(&state->attitude, &attitudeDesired, control);
+#endif
 
 	control->thrust = actualThrust;	
 	

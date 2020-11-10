@@ -30,5 +30,8 @@
 #define MCU_ID_ADDRESS          0x1FFF7A10
 #define MCU_FLASH_SIZE_ADDRESS  0x1FFF7A22
 
+#define PID_CONTROL      
+// #define ADAPTIVE_CONTROL 
+
 
 #endif /* __CONFIG_H */
