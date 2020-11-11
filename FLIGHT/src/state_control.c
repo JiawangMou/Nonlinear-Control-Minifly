@@ -5,6 +5,10 @@
 #include "position_pid.h"
 #include "config_param.h"
 
+#ifdef ADAPTIVE_CONTROL
+#include "attitude_adaptive_control.h"
+#endif
+
 /********************************************************************************	 
  * 本程序只供学习使用，未经作者许可，不得用于其它任何用途
  * ALIENTEK MiniFly
@@ -47,7 +51,8 @@ void stateControl(control_t *control, sensorData_t *sensors, state_t *state, set
 			positionController(&actualThrust, &attitudeDesired, setpoint, state, POSITION_PID_DT);
 		}
 	}
-	
+
+#ifdef PID_CONTROL		
 	//角度环（外环）
 	if (RATE_DO_EXECUTE(ANGEL_PID_RATE, tick))
 	{
@@ -72,11 +77,10 @@ void stateControl(control_t *control, sensorData_t *sensors, state_t *state, set
 			
 		attitudeDesired.roll += configParam.trimR;	//叠加微调值
 		attitudeDesired.pitch += configParam.trimP;		
-#ifdef PID_CONTROL		
+	
 		attitudeAnglePID(&state->attitude, &attitudeDesired, &rateDesired);
-#endif
 	}
-#ifdef PID_CONTROL			
+		
 	//角速度环（内环）
 	if (RATE_DO_EXECUTE(RATE_PID_RATE, tick))
 	{
@@ -102,7 +106,32 @@ void stateControl(control_t *control, sensorData_t *sensors, state_t *state, set
 #endif
 
 #ifdef ADAPTIVE_CONTROL
-attitudeAdadptiveControl(&state->attitude, &attitudeDesired, control);
+	if (RATE_DO_EXECUTE(ADAPTIVE_CONTROL_RATE, tick))
+	{
+		if (setpoint->mode.z == modeDisable)
+		{
+			actualThrust = setpoint->thrust;
+		}
+		if (setpoint->mode.x == modeDisable || setpoint->mode.y == modeDisable) 
+		{
+			attitudeDesired.roll = setpoint->attitude.roll;
+			attitudeDesired.pitch = setpoint->attitude.pitch;
+		}
+		
+		if(control->flipDir == CENTER)
+		{
+			attitudeDesired.yaw += setpoint->attitude.yaw/ANGEL_PID_RATE; /*期望YAW 速率模式*/
+			if(attitudeDesired.yaw > 180.0f) 
+				attitudeDesired.yaw -= 360.0f;
+			if(attitudeDesired.yaw < -180.0f) 
+				attitudeDesired.yaw += 360.0f;
+		}
+			
+		attitudeDesired.roll += configParam.trimR;	//叠加微调值
+		attitudeDesired.pitch += configParam.trimP;		
+
+		attitudeAdadptiveControl(&state->attitude, &attitudeDesired, control);
+	}
 #endif
 
 	control->thrust = actualThrust;	
@@ -112,9 +141,15 @@ attitudeAdadptiveControl(&state->attitude, &attitudeDesired, control);
 		control->roll = 0;
 		control->pitch = 0;
 		control->yaw = 0;
-		
+
+#ifdef PID_CONTROL		
 		attitudeResetAllPID();	/*复位姿态PID*/	
 		positionResetAllPID();	/*复位位置PID*/
+#endif
+
+#ifdef ADAPTIVE_CONTROL
+	
+#endif
 		attitudeDesired.yaw = state->attitude.yaw;		/*复位计算的期望yaw值*/
 		
 		if(cnt++ > 1500)

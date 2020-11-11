@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "stabilizer_types.h"
+#include "config.h"
 
 /********************************************************************************	 
  * 本程序只供学习使用，未经作者许可，不得用于其它任何用途
@@ -39,6 +40,7 @@
 #define POSITION_ESTIMAT_RATE	RATE_250_HZ	//位置预估速率
 #define POSITION_ESTIMAT_DT		(1.0/RATE_250_HZ)
 
+#ifdef PID_CONTROL
 #define RATE_PID_RATE			RATE_500_HZ //角速度环（内环）PID速率
 #define RATE_PID_DT				(1.0/RATE_500_HZ)
 
@@ -50,8 +52,12 @@
 
 #define POSITION_PID_RATE		POSITION_ESTIMAT_RATE //位置环（外环）PID速率
 #define POSITION_PID_DT			(1.0/POSITION_ESTIMAT_RATE)
+#endif
 
-
+#ifdef ADAPTIVE_CONTROL
+#define ADAPTIVE_CONTROL_RATE   RATE_250_HZ//自适应控制器控制速率
+#define ADAPTIVE_CONTROL_DT     (1.0/ADAPTIVE_CONTROL_RATE)
+#endif
 
 void stabilizerInit(void);
 void stabilizerTask(void* param);

@@ -16,6 +16,20 @@ void MulMatrixDD(double *x,double *y, int m,int k,int n, double *z)
 
 }
 
+//矩阵加法
+/********参数表*******
+@Parameter    x:    m行k列矩阵（用一维数组表示）
+@Parameter    y:    m行k列矩阵（用一维数组表示）
+@Parameter    m,k:    矩阵行列参数
+@Parameter    z:    m行k列输出矩阵（用一维数组表示）
+***********************/
+void MatrixADD(float *x,float *y,int m,int k, float *z)
+{
+    for(int i=0; i<m; i++)
+        for(int j=0; j<k; j++)
+            z[i*m+j] = x[i*m+j] + y[i*m+j];
+}
+
 //方阵转置
 /********参数表*******
 @Parameter    x:    m行m列矩阵（用一维数组表示）
@@ -176,4 +190,13 @@ void JacbiCor(double * pMatrix,int nDim, double *pdblVects, double *pdbEigenValu
         }  
     } 
 
+}
+
+
+/********************************向量相关运算*******************************************/
+void vector3_crossproduct(float *x,float *y, float *output)
+{
+    output[0] = x[1] * y[2] - x[2] * y[1];
+    output[1] = x[2] * y[0] - x[0] * y[2];
+    output[2] = x[0] * y[1] - x[1] * y[0];
 }
