@@ -6,7 +6,7 @@
 * @ filename : matrix.h
 * @ author   : Jiawang Mou(moujiawang@sjtu.edu.cn)
 * @ create   : 2020/11/11 	 10:45:43
-/******************************************************************************/
+******************************************************************************/
 
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
@@ -26,11 +26,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
 //
-void MulMatrixDD(double *x,double *y, int m,int k,int n, double *z);
-void TransSquareD(double *x, int m);
+void MulMatrixDD(float *x,float *y, int m,int k,int n, float *z);
+void TransSquareD(float *x, int m);
 void JacbiCor(double * pMatrix,int nDim, double *pdblVects, double *pdbEigenValues, double dbEps,int nJt);
-void TransMatrixD(double *x, int m, int n, double *z);
-void TransMatrixS(double *x, int m, int n, double *z);
+void TransMatrixD(float *x, int m, int n, float *z);
+void TransMatrixS(short *x, int m, int n, float *z);
 void MatrixADD(float *x,float *y,int m,int k, float *z);
 void vector3_crossproduct(float *x,float *y, float *output);
 #endif	 //__MATRIX_H__

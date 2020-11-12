@@ -1,12 +1,12 @@
 /*******************************************************************************
-* @Copylift (c) 2020, Jiawang Mou, Inc.
-* @
-* @ pluginTemplate : [description]
-* @
-* @ filename : attitude_adaptive_control.h
-* @ author   : Jiawang Mou(moujiawang@sjtu.edu.cn)
-* @ create   : 2020/11/11 	 10:46:25
-/******************************************************************************/
+ * @Copylift (c) 2020, Jiawang Mou, Inc.
+ * @
+ * @ pluginTemplate : [description]
+ * @
+ * @ filename : attitude_adaptive_control.h
+ * @ author   : Jiawang Mou(moujiawang@sjtu.edu.cn)
+ * @ create   : 2020/11/11 	 10:46:25
+ ******************************************************************************/
 
 #ifndef __ATTITUDE_ADAPTIVE_CONTROL_H__
 #define __ATTITUDE_ADAPTIVE_CONTROL_H__
@@ -41,8 +41,7 @@ typedef struct {
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
 //
-void attitudeAdadptiveControl(
-    ACobject* acobject, Axis3f gyro, attitude_t* actualAngle, attitude_t* desiredAngle, control_t* output);
+void attitudeAdadptiveControl(Axis3f gyro, attitude_t* actualAngle, attitude_t* desiredAngle, control_t* output);
 void attitudeAdadptiveControlInit(const float dt);
 #endif //__ATTITUDE_ADAPTIVE_CONTROL_H__
 ////////////////////////////////// EOF /////////////////////////////////////////

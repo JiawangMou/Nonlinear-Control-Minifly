@@ -2,6 +2,7 @@
 #include "pid.h"
 #include "sensors.h"
 #include "attitude_pid.h"
+#include "attitude_adaptive_control.h"
 
 /********************************************************************************	 
  * 本程序只供学习使用，未经作者许可，不得用于其它任何用途
@@ -46,9 +47,10 @@ static inline int16_t pidOutLimit(float in)
 		return (int16_t)in;
 }
 
+#ifdef PID_CONTROL
 void attitudeControlInit(float ratePidDt, float anglePidDt)
 {
-#ifdef PID_CONTROL
+
 	pidInit(&pidAngleRoll, 0, configParam.pidAngle.roll, anglePidDt);			/*roll  角度PID初始化*/
 	pidInit(&pidAnglePitch, 0, configParam.pidAngle.pitch, anglePidDt);			/*pitch 角度PID初始化*/
 	pidInit(&pidAngleYaw, 0, configParam.pidAngle.yaw, anglePidDt);				/*yaw   角度PID初始化*/
@@ -62,12 +64,8 @@ void attitudeControlInit(float ratePidDt, float anglePidDt)
 	pidSetIntegralLimit(&pidRateRoll, PID_RATE_ROLL_INTEGRATION_LIMIT);			/*roll  角速度积分限幅设置*/
 	pidSetIntegralLimit(&pidRatePitch, PID_RATE_PITCH_INTEGRATION_LIMIT);		/*pitch 角速度积分限幅设置*/
 	pidSetIntegralLimit(&pidRateYaw, PID_RATE_YAW_INTEGRATION_LIMIT);			/*yaw   角速度积分限幅设置*/
-#endif
-
-#ifdef ADAPTIVE_CONTROL
-	attitudeAdadptiveControlInit();
-#endif
 }
+#endif
 
 bool attitudeControlTest()
 {

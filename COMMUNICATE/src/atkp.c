@@ -21,6 +21,9 @@
 #include "optical_flow.h"
 #include "state_estimator.h"
 
+#ifdef ADAPTIVE_CONTROL
+#include "attitude_adaptive_control.h"
+#endif
 /*FreeRTOS相关头文件*/
 #include "FreeRTOS.h"
 #include "task.h"
@@ -494,8 +497,13 @@ static void atkpReceiveAnl(atkp_t *anlPacket)
 		if(anlPacket->data[0] == D_ACK_RESET_PARAM)/*恢复默认参数*/
 		{
 			resetConfigParamPID();
+			#ifdef PID_CONTROL
+			attitudeControlInit(RATE_PID_DT, ANGEL_PID_DT); /*初始化姿态PID*/			
+			#endif
 			
-			attitudeControlInit(RATE_PID_DT, ANGEL_PID_DT); /*初始化姿态PID*/	
+			#ifdef ADAPTIVE_CONTROL
+			attitudeAdadptiveControlInit(ADAPTIVE_CONTROL_DT);
+			#endif	
 			positionControlInit(VELOCITY_PID_DT, POSITION_PID_DT); /*初始化位置PID*/
 			
 			sendPid(1, pidRateRoll.kp, pidRateRoll.ki, pidRateRoll.kd,

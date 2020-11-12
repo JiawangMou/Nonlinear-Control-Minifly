@@ -1,3 +1,4 @@
+#include "math.h"
 #include "matrix.h"
 
 //矩阵乘法
@@ -7,7 +8,7 @@
 @Parameter    m,k,n:    矩阵行列参数
 @Parameter    z:    m行n列输出矩阵（用一维数组表示）
 ***********************/
-void MulMatrixDD(double *x,double *y, int m,int k,int n, double *z)
+void MulMatrixDD(float *x,float *y, int m,int k,int n, float *z)
 {
     for(int nm=0; nm<m; nm++)
         for(int nn=0; nn<n; nn++)
@@ -35,9 +36,9 @@ void MatrixADD(float *x,float *y,int m,int k, float *z)
 @Parameter    x:    m行m列矩阵（用一维数组表示）
 @Parameter    m:    矩阵行列数
 ***********************/
-void TransSquareD(double *x, int m)
+void TransSquareD(float *x, int m)
 {
-    double temp;
+    float temp;
     for(int nm=0; nm<m; nm++){            //对原矩阵第nm行
         for(int nn=0; nn<nm; nn++){        //对原矩阵第nn列
             temp = x[nm*m+nn];            //z矩阵第nn行第nm列
@@ -51,17 +52,17 @@ void TransSquareD(double *x, int m)
 @Parameter    m,n:    矩阵行列数
 @Parameter    z:    n行m列矩阵（用一维数组表示）
 ***********************/
-void TransMatrixD(double *x, int m, int n, double *z)
+void TransMatrixD(float *x, int m, int n, float *z)
 {
     for(int nm=0; nm<m; nm++)            //对原矩阵第nm行
         for(int nn=0; nn<n; nn++)        //对原矩阵第nn列
             z[nn*m+nm] = x[nm*n+nn];    //z矩阵第nn行第nm列
 }
-void TransMatrixS(short *x, int m, int n, double *z)
+void TransMatrixS(short *x, int m, int n, float *z)
 {
     for(int nm=0; nm<m; nm++)            //对原矩阵第nm行
         for(int nn=0; nn<n; nn++)        //对原矩阵第nn列
-            z[nn*m+nm] = (double)x[nm*n+nn];    //z矩阵第nn行第nm列
+            z[nn*m+nm] = (float)x[nm*n+nn];    //z矩阵第nn行第nm列
 }
 
 /********参数表*******
