@@ -30,8 +30,8 @@ void attitudeAdadptiveControl(
     float x[3]         = { matrix[0][0], matrix[1][0], matrix[2][0] };
     float y[3]         = { matrix[0][1], matrix[1][1], matrix[2][1] };
 
-    MulMatrixDD(y, z_desired, 1, 3, 1, &acobject->error[0]);
-    MulMatrixDD(x, z_desired, 1, 3, 1, &acobject->error[1]);
+    MulMatrixDD(&y, &z_desired, 1, 3, 1, &acobject->error[0]);
+    MulMatrixDD(&x, &z_desired, 1, 3, 1, &acobject->error[1]);
     // acobject->error[2] = 0;
     MulMatrixDD(&acobject->eGain, &acobject->error, 3, 3, 1, &temp);
     // Sa = w + e_gain * error;
