@@ -384,10 +384,13 @@ static void atkpSendPeriod(void)
 	{
 		Axis3f acc,vel,pos;
 		float thrustBase = 0.1f * configParam.thrustBase;
-		
+		control_t controldata;
+		getcontrolData(&controldata);
 		getStateData(&acc, &vel, &pos);
 		sendUserData(1, acc.x, acc.y, acc.z, vel.x, vel.y, vel.z, pos.x, pos.y, pos.z);
-		sendUserData(2, opFlow.velLpf[X],opFlow.velLpf[Y],opFlow.posSum[X],opFlow.posSum[Y],
+		// sendUserData(2, opFlow.velLpf[X],opFlow.velLpf[Y],opFlow.posSum[X],opFlow.posSum[Y],
+		// 				0,getFusedHeight(),vl53lxx.distance,100.f*vl53lxx.quality,thrustBase);
+		sendUserData(2, controldata.roll,controldata.pitch,controldata.yaw,opFlow.posSum[Y],
 						0,getFusedHeight(),vl53lxx.distance,100.f*vl53lxx.quality,thrustBase);
 	}
 	if(!(count_ms % PERIOD_RCDATA))

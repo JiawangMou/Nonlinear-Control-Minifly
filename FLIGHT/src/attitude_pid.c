@@ -47,7 +47,7 @@ static inline int16_t pidOutLimit(float in)
 		return (int16_t)in;
 }
 
-#ifdef PID_CONTROL
+
 void attitudeControlInit(float ratePidDt, float anglePidDt)
 {
 
@@ -65,7 +65,7 @@ void attitudeControlInit(float ratePidDt, float anglePidDt)
 	pidSetIntegralLimit(&pidRatePitch, PID_RATE_PITCH_INTEGRATION_LIMIT);		/*pitch 角速度积分限幅设置*/
 	pidSetIntegralLimit(&pidRateYaw, PID_RATE_YAW_INTEGRATION_LIMIT);			/*yaw   角速度积分限幅设置*/
 }
-#endif
+
 
 bool attitudeControlTest()
 {
@@ -74,16 +74,19 @@ bool attitudeControlTest()
 
 void attitudeRatePID(Axis3f *actualRate,attitude_t *desiredRate,control_t *output)	/* 角速度环PID */
 {
+	#ifdef PID_CONTROL
 	output->roll = pidOutLimit(pidUpdate(&pidRateRoll, desiredRate->roll - actualRate->x));
 	output->pitch = pidOutLimit(pidUpdate(&pidRatePitch, desiredRate->pitch - actualRate->y));
+	#endif
 	output->yaw = pidOutLimit(pidUpdate(&pidRateYaw, desiredRate->yaw - actualRate->z));
 }
 
 void attitudeAnglePID(attitude_t *actualAngle,attitude_t *desiredAngle,attitude_t *outDesiredRate)	/* 角度环PID */
 {
+	#ifdef PID_CONTROL
 	outDesiredRate->roll = pidUpdate(&pidAngleRoll, desiredAngle->roll - actualAngle->roll);
 	outDesiredRate->pitch = pidUpdate(&pidAnglePitch, desiredAngle->pitch - actualAngle->pitch);
-
+	#endif
 	float yawError = desiredAngle->yaw - actualAngle->yaw ;
 	if (yawError > 180.0f) 
 		yawError -= 360.0f;

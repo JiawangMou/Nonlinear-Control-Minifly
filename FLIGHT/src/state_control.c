@@ -28,9 +28,8 @@ static attitude_t rateDesired;
 
 void stateControlInit(void)
 {
-#ifdef PID_CONTROL
     attitudeControlInit(RATE_PID_DT, ANGEL_PID_DT); /*初始化姿态PID*/
-#endif
+
 #ifdef ADAPTIVE_CONTROL
     attitudeAdadptiveControlInit(ADAPTIVE_CONTROL_DT);
 #endif
@@ -54,7 +53,6 @@ void stateControl(control_t* control, sensorData_t* sensors, state_t* state, set
         }
     }
 
-#ifdef PID_CONTROL
     //角度环（外环）
     if (RATE_DO_EXECUTE(ANGEL_PID_RATE, tick)) {
         if (setpoint->mode.z == modeDisable) {
@@ -73,8 +71,8 @@ void stateControl(control_t* control, sensorData_t* sensors, state_t* state, set
                 attitudeDesired.yaw += 360.0f;
         }
 
-        attitudeDesired.roll += configParam.trimR; //叠加微调值
-        attitudeDesired.pitch += configParam.trimP;
+        // attitudeDesired.roll += configParam.trimR; //叠加微调值
+        // attitudeDesired.pitch += configParam.trimP;
 
         attitudeAnglePID(&state->attitude, &attitudeDesired, &rateDesired);
     }
@@ -98,7 +96,7 @@ void stateControl(control_t* control, sensorData_t* sensors, state_t* state, set
 
         attitudeRatePID(&sensors->gyro, &rateDesired, control);
     }
-#endif
+
 
 #ifdef ADAPTIVE_CONTROL
     if (RATE_DO_EXECUTE(ADAPTIVE_CONTROL_RATE, tick)) {
@@ -118,8 +116,8 @@ void stateControl(control_t* control, sensorData_t* sensors, state_t* state, set
                 attitudeDesired.yaw += 360.0f;
         }
 
-        attitudeDesired.roll += configParam.trimR; //叠加微调值
-        attitudeDesired.pitch += configParam.trimP;
+//        attitudeDesired.roll += configParam.trimR; //叠加微调值
+//        attitudeDesired.pitch += configParam.trimP;
 
         attitudeAdadptiveControl(sensors->gyro, &state->attitude, &attitudeDesired, control);
     }
@@ -132,10 +130,10 @@ void stateControl(control_t* control, sensorData_t* sensors, state_t* state, set
         control->pitch = 0;
         control->yaw   = 0;
 
-#ifdef PID_CONTROL
+
         attitudeResetAllPID(); /*复位姿态PID*/
         positionResetAllPID(); /*复位位置PID*/
-#endif
+
 
 #ifdef ADAPTIVE_CONTROL
         attitudeAdadptiveControlInit(ADAPTIVE_CONTROL_DT);

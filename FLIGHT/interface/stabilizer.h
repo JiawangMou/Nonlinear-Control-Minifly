@@ -55,7 +55,7 @@
 
 
 #ifdef ADAPTIVE_CONTROL
-#define ADAPTIVE_CONTROL_RATE   RATE_250_HZ//自适应控制器控制速率
+#define ADAPTIVE_CONTROL_RATE   RATE_500_HZ//自适应控制器控制速率
 #define ADAPTIVE_CONTROL_DT     (1.0/ADAPTIVE_CONTROL_RATE)
 #endif
 
@@ -69,5 +69,7 @@ float getBaroData(void);
 void getSensorData(sensorData_t* get);	
 void getStateData(Axis3f* acc, Axis3f* vel, Axis3f* pos);
 void setFastAdjustPosParam(u16 velTimes, u16 absTimes, float height);/*设置快速调整位置参数*/
+
+void getcontrolData(control_t* get);
 
 #endif /* __STABALIZER_H */

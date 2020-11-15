@@ -246,15 +246,15 @@ void buildRotationMatrix(fp_angles_t *delta, float matrix[3][3])
     coszsinx = sinx * cosz;
     sinzsinx = sinx * sinz;
 
-    matrix[0][X] = cosz * cosy;
-    matrix[0][Y] = -cosy * sinz;
-    matrix[0][Z] = siny;
-    matrix[1][X] = sinzcosx + (coszsinx * siny);
-    matrix[1][Y] = coszcosx - (sinzsinx * siny);
-    matrix[1][Z] = -sinx * cosy;
-    matrix[2][X] = (sinzsinx) - (coszcosx * siny);
-    matrix[2][Y] = (coszsinx) + (sinzcosx * siny);
-    matrix[2][Z] = cosy * cosx;
+    matrix[X][0] = cosz * cosy;
+    matrix[Y][0] = cosy * sinz;
+    matrix[Z][0] = -siny;
+    matrix[X][1] = -sinzcosx + (coszsinx * siny);
+    matrix[Y][1] = coszcosx + (sinzsinx * siny);
+    matrix[Z][1] = sinx * cosy;
+    matrix[X][2] = (sinzsinx) + (coszcosx * siny);
+    matrix[Y][2] = (sinzcosx * siny) - (coszsinx);
+    matrix[Z][2] = cosy * cosx;
 }
 
 // Rotate a vector *v by the euler angles defined by the 3-vector *delta.

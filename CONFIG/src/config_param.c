@@ -27,7 +27,7 @@
 ********************************************************************************/
 
 
-#define VERSION 13	/*13 表示V1.3*/
+#define VERSION 14	/*13 表示V1.3*/
 
 configParam_t configParam;
 
@@ -81,13 +81,13 @@ static configParam_t configParamDefault=
 	{	
 		.vx=
 		{
-			.kp=4.5,
+			.kp=2.0,
 			.ki=0.0,
 			.kd=0.0,
 		},
 		.vy=
 		{
-			.kp=4.5,
+			.kp=2.0,
 			.ki=0.0,
 			.kd=0.0,
 		},
@@ -100,19 +100,19 @@ static configParam_t configParamDefault=
 		
 		.x=
 		{
-			.kp=4.0,
+			.kp=2.0,
 			.ki=0.0,
 			.kd=0.6,
 		},
 		.y=
 		{
-			.kp=4.0,
+			.kp=2.0,
 			.ki=0.0,
 			.kd=0.6,
 		},
 		.z=
 		{
-			.kp=6.0,
+			.kp=3.0,
 			.ki=0.0,
 			.kd=4.5,
 		},

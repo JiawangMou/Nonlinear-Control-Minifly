@@ -28,7 +28,7 @@ void MatrixADD(float *x,float *y,int m,int k, float *z)
 {
     for(int i=0; i<m; i++)
         for(int j=0; j<k; j++)
-            z[i*m+j] = x[i*m+j] + y[i*m+j];
+            z[i*k+j] = x[i*k+j] + y[i*k+j];
 }
 
 //方阵转置

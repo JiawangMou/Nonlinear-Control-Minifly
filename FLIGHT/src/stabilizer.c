@@ -223,4 +223,7 @@ void getStateData(Axis3f* acc, Axis3f* vel, Axis3f* pos)
 	pos->z = 1.0f * state.position.z;
 }
 
-
+void getcontrolData(control_t* get)
+{
+	*get = control;
+}
