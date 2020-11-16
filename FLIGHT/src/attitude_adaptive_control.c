@@ -100,14 +100,14 @@ void attitudeAdadptiveControl(Axis3f gyro, attitude_t* actualAngle, attitude_t* 
         AcAttitude.alpha[i]     = AcAttitude.J_e[i];
         AcAttitude.alpha[i + 3] = AcAttitude.T0_e[i];
     }
-    float Y_alpha[3] = { 0 };
-    MulMatrixDD(&Y[0][0], AcAttitude.alpha, 3, 6, 1, Y_alpha);
+
+    MulMatrixDD(&Y[0][0], AcAttitude.alpha, 3, 6, 1, AcAttitude.Y_alpha);
     float Ka_Sa[3] = {0};
     MulMatrixDD(&AcAttitude.Ka[0][0], AcAttitude.Sa, 3, 3, 1, Ka_Sa);
-    output->roll  = ControlOutLimit(-Ka_Sa[0] + Y_alpha[0]);
-    output->pitch = ControlOutLimit(-Ka_Sa[1] + Y_alpha[1]);
-//    output->yaw  = -Ka_Sa[2] + Y_alpha[2];
-
+    //output = -Ka*Sa + Y*alpha
+    output->roll  = ControlOutLimit(-Ka_Sa[0] + AcAttitude.Y_alpha[0]);
+    output->pitch = ControlOutLimit(-Ka_Sa[1] + AcAttitude.Y_alpha[1]);
+//  output->yaw  = -Ka_Sa[2] + AcAttitude.Y_alpha[2];
     float YT[6][3] = { 0 };
     TransMatrixD(&Y[0][0], 3, 6, &YT[0][0]);
     float YT_Sa[6] = { 0 };
@@ -173,4 +173,9 @@ void attitudeAdadptiveControlReset(void)
     AcAttitude.J_e[0] = 1;
     AcAttitude.J_e[1] = 1;
     AcAttitude.J_e[2] = 1;
+}
+
+void getY_alpha(float* get)
+{
+    get = AcAttitude.Y_alpha;
 }

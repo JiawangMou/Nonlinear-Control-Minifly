@@ -28,11 +28,11 @@ typedef struct {
     float Ka[3][3];      //< positive diagonal gain matrix of Sa
     float T0_e[3];       //< initial torque estimate
     float alpha[6];      //< J_e and T0_e
+    float Y_alpha[3];    //< Y * alpha  adaptive part
     float J_e[3];        //< inertia matrix estimate
-    float outputLimit;   //< total PID output limit, absolute value. '0' means no limit.
+    float outputLimit;   //< total output limit, absolute value. '0' means no limit.
     float AGain[6][6];   //< gains of adaptive member
     float dt;            //< delta-time dt
-    float out;           //< out
 } ACobject;
 ////////////////////////////////////////////////////////////////////////////////
 // Classes
@@ -43,5 +43,6 @@ typedef struct {
 //
 void attitudeAdadptiveControl(Axis3f gyro, attitude_t* actualAngle, attitude_t* desiredAngle, control_t* output);
 void attitudeAdadptiveControlInit(const float dt);
+void getY_alpha(float* get);
 #endif //__ATTITUDE_ADAPTIVE_CONTROL_H__
 ////////////////////////////////// EOF /////////////////////////////////////////
