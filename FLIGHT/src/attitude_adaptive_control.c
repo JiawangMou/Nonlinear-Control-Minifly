@@ -4,29 +4,27 @@
 #include "maths.h"
 #include "matrix.h"
 
-
-
 ACobject AcAttitude;
 
 static inline int16_t ControlOutLimit(float in)
 {
-	if (in > INT16_MAX)
-		return INT16_MAX;
-	else if (in < -INT16_MAX)
-		return -INT16_MAX;
-	else
-		return (int16_t)in;
+    if (in > INT16_MAX)
+        return INT16_MAX;
+    else if (in < -INT16_MAX)
+        return -INT16_MAX;
+    else
+        return (int16_t)in;
 }
 void attitudeAdadptiveControl(Axis3f gyro, attitude_t* actualAngle, attitude_t* desiredAngle, control_t* output)
 {
     fp_angles_t delta;
-    float       temp[3] = {0};
+    float       temp[3]              = { 0 };
     float       matrix[3][3]         = { 0 }; //当前实际欧拉角对应的旋转矩阵
     float       desired_matrix[3][3] = { 0 }; //预达到目标欧拉角对应的旋转矩阵
-	
-	gyro.x = gyro.x * DEG2RAD;
+
+    gyro.x = gyro.x * DEG2RAD;
     gyro.y = gyro.y * DEG2RAD;
-    gyro.z = gyro.z * DEG2RAD; 
+    gyro.z = gyro.z * DEG2RAD;
 
     delta.angles.roll  = actualAngle->roll * DEG2RAD;
     delta.angles.pitch = actualAngle->pitch * DEG2RAD;
@@ -52,13 +50,13 @@ void attitudeAdadptiveControl(Axis3f gyro, attitude_t* actualAngle, attitude_t* 
     for (int i = 0; i < 3; i++)
         temp[i] = AcAttitude.error[i] * AcAttitude.eGain;
     // Sa = w + e_gain * error;
-   
+
     MatrixADD(temp, gyro.axis, 3, 1, AcAttitude.Sa);
     // e_deriv
     for (int i = 0; i < 3; i++) {
         AcAttitude.errorderiv[i] = (AcAttitude.error[i] - AcAttitude.prevError[i]) / AcAttitude.dt;
         AcAttitude.prevError[i]  = AcAttitude.error[i];
-		AcAttitude.error[i] = 0;
+        AcAttitude.error[i]      = 0;
     }
     /*
     // J*w
@@ -96,18 +94,15 @@ void attitudeAdadptiveControl(Axis3f gyro, attitude_t* actualAngle, attitude_t* 
     Y[0][3]       = 1;
     Y[1][4]       = 1;
     Y[2][5]       = 1;
-    for (int i = 0; i < 3; i++) {
-        AcAttitude.alpha[i]     = AcAttitude.J_e[i];
-        AcAttitude.alpha[i + 3] = AcAttitude.T0_e[i];
-    }
 
+    // Y_alpha = Y * alpha
     MulMatrixDD(&Y[0][0], AcAttitude.alpha, 3, 6, 1, AcAttitude.Y_alpha);
-    float Ka_Sa[3] = {0};
+    float Ka_Sa[3] = { 0 };
     MulMatrixDD(&AcAttitude.Ka[0][0], AcAttitude.Sa, 3, 3, 1, Ka_Sa);
-    //output = -Ka*Sa + Y*alpha
+    // output = -Ka*Sa + Y*alpha
     output->roll  = ControlOutLimit(-Ka_Sa[0] + AcAttitude.Y_alpha[0]);
     output->pitch = ControlOutLimit(-Ka_Sa[1] + AcAttitude.Y_alpha[1]);
-//  output->yaw  = -Ka_Sa[2] + AcAttitude.Y_alpha[2];
+    //  output->yaw  = -Ka_Sa[2] + AcAttitude.Y_alpha[2];
     float YT[6][3] = { 0 };
     TransMatrixD(&Y[0][0], 3, 6, &YT[0][0]);
     float YT_Sa[6] = { 0 };
@@ -116,9 +111,8 @@ void attitudeAdadptiveControl(Axis3f gyro, attitude_t* actualAngle, attitude_t* 
     MulMatrixDD(&AcAttitude.AGain[0][0], YT_Sa, 6, 6, 1, Aderiv);
 
     for (int i = 0; i < 6; i++)
-        AcAttitude.alpha[i] -= Aderiv[i] *  AcAttitude.dt;
+        AcAttitude.alpha[i] -= Aderiv[i] * AcAttitude.dt;
 }
-
 
 void attitudeAdadptiveControlInit(const float dt)
 {
@@ -129,6 +123,7 @@ void attitudeAdadptiveControlInit(const float dt)
         AcAttitude.Sa[i]         = 0;
         AcAttitude.T0_e[i]       = 0;
         AcAttitude.J_e[i]        = 0;
+        AcAttitude.Y_alpha[i]    = 0;
         for (int j = 0; j < 3; j++) {
             AcAttitude.Ka[i][j] = 0;
         }
@@ -136,9 +131,9 @@ void attitudeAdadptiveControlInit(const float dt)
 
     AcAttitude.eGain = 8;
 
-    AcAttitude.Ka[0][0] = 4000;
-    AcAttitude.Ka[1][1] = 4000;
-    AcAttitude.Ka[2][2] = 4000;
+    AcAttitude.Ka[0][0] = 3000;
+    AcAttitude.Ka[1][1] = 3000;
+    AcAttitude.Ka[2][2] = 3000;
 
     AcAttitude.T0_e[0] = 0;
     AcAttitude.T0_e[1] = 0;
@@ -147,10 +142,13 @@ void attitudeAdadptiveControlInit(const float dt)
     AcAttitude.J_e[0] = 0.0211f;
     AcAttitude.J_e[1] = 0.0211f;
     AcAttitude.J_e[2] = 0.0366F;
-    
-    for(int i=0; i<6; i++)
-    {
-        for(int j=0; j<6; j++)
+
+    for (int i = 0; i < 3; i++) {
+        AcAttitude.alpha[i]     = AcAttitude.J_e[i];
+        AcAttitude.alpha[i + 3] = AcAttitude.T0_e[i];
+    }
+    for (int i = 0; i < 6; i++) {
+        for (int j = 0; j < 6; j++)
             AcAttitude.AGain[i][j] = 0;
         AcAttitude.AGain[i][i] = 1;
     }
@@ -164,6 +162,7 @@ void attitudeAdadptiveControlReset(void)
         AcAttitude.errorderiv[i] = 0;
         AcAttitude.prevError[i]  = 0;
         AcAttitude.Sa[i]         = 0;
+        AcAttitude.Y_alpha[i]    = 0;
     }
 
     AcAttitude.T0_e[0] = 1;
@@ -175,7 +174,7 @@ void attitudeAdadptiveControlReset(void)
     AcAttitude.J_e[2] = 1;
 }
 
-void getY_alpha(float* get)
-{
-    get = AcAttitude.Y_alpha;
+void getY_alpha(float* get) 
+{ 
+    get = AcAttitude.Y_alpha; 
 }
